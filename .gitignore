@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/backend/uploads/local_schema_files
 /.pnp
 .pnp.js
 
