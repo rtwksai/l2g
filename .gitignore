@@ -1,8 +1,10 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+/frontend/node_modules/
 /backend/uploads/local_schema_files
+/backend/config.py
+
 /.pnp
 .pnp.js
 
