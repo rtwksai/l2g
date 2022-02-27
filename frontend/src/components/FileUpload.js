@@ -1,9 +1,17 @@
-import React, {useState} from 'react';
-import axios from 'axios';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import { DropzoneAreaBase } from 'material-ui-dropzone';
+import React, {useEffect, useState} from 'react';
 
-function FileUpload(){
+import axios from 'axios';
+// import AddressForm from './FileUpload';
+
+export default function FileUpload(){
 	
-    const [selectedFile, setSelectedFile] = useState();
+  const [selectedFile, setSelectedFile] = useState();
 	const [isFilePicked, setIsFilePicked] = useState(false);
 
 	const http = axios.create({
@@ -14,14 +22,13 @@ function FileUpload(){
 	});
 
     const changeHandler = (e) => {
-		setSelectedFile(e.target.files[0]);
-		setIsFilePicked(true);
+        setIsFilePicked(true);
+        setSelectedFile(e[0]);
 	};
 
 	const handleSubmission = () => {
 		const formData = new FormData();
 		formData.append('file', selectedFile);
-
 		http.post("/upload", formData)
 			.then((response) => response.json)
 			.then((result) => {
@@ -32,22 +39,20 @@ function FileUpload(){
 			});
 	};
 
+    
     return (
-        <div>
-            <input type="file" name="file" onChange={changeHandler} />
-            {isFilePicked ? (
-                <div>
-                    <p>Filetype: {selectedFile.type}</p>
-                </div>
-            ) : (
-                <p>Select a file to show details</p>
-            )}
-            
-            <div>
-                <button onClick={handleSubmission}>Submit</button>
-            </div>
-        </div>
-    )
+        <React.Fragment>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+            <DropzoneAreaBase
+                onDrop={changeHandler}
+                // onAdd={handleSubmission}
+                onDelete={(fileObj) => console.log('Removed File:', fileObj)}
+                onAlert={(message, variant) => console.log(`${variant}: ${message}`)}
+            />
+			<button onClick={handleSubmission}>Submit</button>
+            </Grid>
+          </Grid>
+        </React.Fragment>
+      )
 }
-
-export default FileUpload;

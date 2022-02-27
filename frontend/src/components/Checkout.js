@@ -17,6 +17,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 // import Review from './Review';
 import FileUpload from './FileUpload';
 import LocalSchema from './LocalSchema';
+import SelectType from './SelectType';
+import SqlForm from './SqlForm';
 
 function Copyright() {
   return (
@@ -30,26 +32,49 @@ function Copyright() {
     </Typography>
   );
 }
+const sql_steps = ['Select Schema Type', 'Upload Local Schema', 'View Local Schema', 'Obtain Global Schema'];
+const csv_steps = ['Select Schema Type', 'Upload Local Schema', 'View Local Schema', 'Obtain Global Schema'];
+const steps = ['Select Schema Type', 'Upload Local Schema', 'View Local Schema', 'Obtain Global Schema'];
 
-const steps = ['Upload Local Schmea', 'View Local Schema', 'Obtain Global Schema'];
 
-function getStepContent(step) {
-  switch (step) {
-    case 0:
-      return <FileUpload />;
-    case 1:
-      return <LocalSchema />;
-    case 2:
-      return <LocalSchema />;
-    default:
-      throw new Error('Unknown step');
-  }
-}
+
 
 const theme = createTheme();
 
 export default function Checkout() {
+  
   const [activeStep, setActiveStep] = React.useState(0);
+
+  const [schemaType, setSchemaType] = React.useState('');
+
+  function onChange_schemaType(newSchemaType) 
+  {   
+    setSchemaType(newSchemaType);
+  }
+
+
+  function getStepContent(step) {
+    
+    switch (step) {
+      case 0:
+        return <SelectType onChange_sT={onChange_schemaType} />;
+      case 1:
+        console.log(schemaType);
+        if(schemaType == 'sql')
+        {
+          console.log('Hi');
+          return <SqlForm />;
+        }
+        
+        return <FileUpload />;
+      case 2:
+        return <LocalSchema />;
+      default:
+        throw new Error('Unknown step');
+    }
+  }
+
+  console.log(schemaType);
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
