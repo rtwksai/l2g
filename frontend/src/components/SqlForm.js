@@ -51,16 +51,21 @@ export default function SqlForm() {
       evt.preventDefault();
 		const formData = new FormData();
 		formData.append('', formInput);
-		http.get("./query-db", formInput)
-			.then((response) => response.json)
+		http.get("./query-db", {
+      params: {
+        db_uname: formInput["db_uname"],
+        db_pass: formInput["db_pass"],
+        db_name: formInput["db_name"],
+        db_url: formInput["db_url"]
+      }
+    })
+			.then((response) => console.log(response))
 			.then((result) => {
 				console.log('Success:', result);
 			})
 			.catch((error) => {
 				console.error('Error:', error);
 			});
-
-    console.log(formInput);
 	};
     
 
