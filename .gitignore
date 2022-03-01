@@ -172,6 +172,7 @@ backend/__pycache__/
 
 # Cython debug symbols
 /backend/backend/cython_debug/
+backend/backend/__pycache__
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
