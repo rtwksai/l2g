@@ -4,23 +4,12 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-// import Grid from '@mui/material/Grid';
-// import Typography from '@mui/material/Typography';
-// import TextField from '@mui/material/TextField';
-// import FormControlLabel from '@mui/material/FormControlLabel';
-// import Checkbox from '@mui/material/Checkbox';
 import { DropzoneAreaBase } from 'material-ui-dropzone';
 import {useEffect, useState} from 'react';
 import { useReducer } from "react";
 import axios from 'axios';
-// db_uname, db_pass, db_name, db_url
 
 export default function SqlForm() {
-  
-    // const [db_uname, setdb_uname] = useState('');
-    // const [db_pass, setdb_pass] = useState('');
-    // const [db_name, setdb_name] = useState('');
-    // const [db_url, setdb_url] = useState('');
 
     const [formInput, setFormInput] = useReducer(
       (state, newState) => ({ ...state, ...newState }),
@@ -39,6 +28,8 @@ export default function SqlForm() {
 		}
 	});
 
+  
+
 
   const handleInput = evt => {
 
@@ -49,18 +40,31 @@ export default function SqlForm() {
 
     const handleSubmission = (evt) => {
       evt.preventDefault();
-		const formData = new FormData();
-		formData.append('', formInput);
-		http.get("./query-db", formInput)
-			.then((response) => response.json)
-			.then((result) => {
-				console.log('Success:', result);
-			})
-			.catch((error) => {
-				console.error('Error:', error);
-			});
+		// const formData = new FormData();
+		// formData.append('', formInput);
+		// http.get("./query-db", formInput)
+		// 	.then((response) => response.json)
+		// 	.then((result) => {
+		// 		console.log('Success:', result);
+		// 	})
+		// 	.catch((error) => {
+		// 		console.error('Error:', error);
+		// 	});
 
     console.log(formInput);
+
+    const response = {'database': [
+        {'table1': [{'column_name': 123, 'column_type' :456}, {'column_name': 12113, 'column_type':356}] },
+        {'table2': [{'column_name': 112, 'column_type' :4256}, {'column_name': 113213, 'column_type':356}] },
+        {'table3': [{'column_name': 123323, 'column_type' :3456}, {'column_name': 111233, 'column_type':356}] },
+        {'table4': [{'column_name': 12342412, 'column_type' :4156}, {'column_name': 112313, 'column_type':356}] }
+      
+                    ]}
+    
+    window.localStorage.setItem("sql_data", JSON.stringify(response));
+
+
+
 	};
     
 
@@ -119,6 +123,7 @@ export default function SqlForm() {
             fullWidth
             autoComplete="cc-number"
             variant="standard"
+            type={"password"}
             onChange={handleInput}
           />
         </Grid>
