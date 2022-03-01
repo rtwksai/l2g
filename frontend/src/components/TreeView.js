@@ -76,7 +76,7 @@ export default function ControlledTreeView()
     }
   };
 
-  const read_sql_data = JSON.parse(window.localStorage.getItem("sql_data"));
+  const read_sql_data = JSON.parse(window.localStorage.getItem("sql_data"))['data'];
 
   // console.log(read_sql_data);
 
