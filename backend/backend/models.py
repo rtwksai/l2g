@@ -2,15 +2,13 @@ import pyodbc
 
 class Database():
     def __init__(self):
-        self.tables = {}
+        self.tables = {'database': []}
 
     def add_table(self, tableName):
-        self.tables[tableName] = {}
+        self.tables['database'].append({tableName: []})
     
-    def add_cols(self, tableName, colName, colType):
-        if tableName in self.tables:
-            self.tables[tableName]['column_name'] = colName
-            self.tables[tableName]['column_type'] = colType
+    def add_cols(self, tableIndex, tableName, colName, colType):
+        self.tables['database'][tableIndex][tableName].append({'column_name':colName, 'column_type':colType})
 
 class ExtractMetadata():
     def __init__(self):
@@ -36,8 +34,11 @@ class ExtractMetadata():
             # for table_schema in crsr.columns(table=t.table_name):
             #     db_wrapper.add_cols(t.table_name, table_schema.column_name, table_schema.type_name)
 
-        for t_name in db_wrapper.tables.keys():
+        db = db_wrapper.tables['database']
+        for t_index in range(len(db)):
+            print(t_index, db[t_index].keys())
+            t_name = list(db[t_index].keys())[0]
             for row in crsr.execute("select * from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME=?", t_name):
-                db_wrapper.add_cols(t_name, row[3], row[7])
+                db_wrapper.add_cols(t_index, t_name, row[3], row[7])
 
         return db_wrapper.tables
