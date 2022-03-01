@@ -12,13 +12,13 @@ import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-// import AddressForm from './AddressForm';
-// import PaymentForm from './PaymentForm';
-// import Review from './Review';
 import FileUpload from './FileUpload';
 import LocalSchema from './LocalSchema';
 import SelectType from './SelectType';
 import SqlForm from './SqlForm';
+import ControlledTreeView from './TreeView';
+
+// npm i @material-ui/lab
 
 function Copyright() {
   return (
@@ -47,6 +47,7 @@ export default function Checkout() {
 
   const [schemaType, setSchemaType] = React.useState('');
 
+
   function onChange_schemaType(newSchemaType) 
   {   
     setSchemaType(newSchemaType);
@@ -62,13 +63,12 @@ export default function Checkout() {
         console.log(schemaType);
         if(schemaType == 'sql')
         {
-          console.log('Hi');
           return <SqlForm />;
         }
         
         return <FileUpload />;
       case 2:
-        return <LocalSchema />;
+        return <ControlledTreeView />;
       default:
         throw new Error('Unknown step');
     }

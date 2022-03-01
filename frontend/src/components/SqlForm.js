@@ -4,23 +4,12 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-// import Grid from '@mui/material/Grid';
-// import Typography from '@mui/material/Typography';
-// import TextField from '@mui/material/TextField';
-// import FormControlLabel from '@mui/material/FormControlLabel';
-// import Checkbox from '@mui/material/Checkbox';
 import { DropzoneAreaBase } from 'material-ui-dropzone';
 import {useEffect, useState} from 'react';
 import { useReducer } from "react";
 import axios from 'axios';
-// db_uname, db_pass, db_name, db_url
 
 export default function SqlForm() {
-  
-    // const [db_uname, setdb_uname] = useState('');
-    // const [db_pass, setdb_pass] = useState('');
-    // const [db_name, setdb_name] = useState('');
-    // const [db_url, setdb_url] = useState('');
 
     const [formInput, setFormInput] = useReducer(
       (state, newState) => ({ ...state, ...newState }),
@@ -38,6 +27,8 @@ export default function SqlForm() {
 			"Content-type": "application/json"
 		}
 	});
+
+  
 
 
   const handleInput = evt => {
@@ -59,7 +50,7 @@ export default function SqlForm() {
         db_url: formInput["db_url"]
       }
     })
-			.then((response) => console.log(response))
+			.then((response) => window.localStorage.setItem("sql_data", JSON.stringify(response)))
 			.then((result) => {
 				console.log('Success:', result);
 			})
@@ -124,6 +115,7 @@ export default function SqlForm() {
             fullWidth
             autoComplete="cc-number"
             variant="standard"
+            type={"password"}
             onChange={handleInput}
           />
         </Grid>
