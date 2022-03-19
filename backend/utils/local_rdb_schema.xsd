@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified">
+
+    <element name="dbSchema">
+        <complexType>
+            <sequence>
+                <!-- Assume that a db can exist only with a min of 1 table -->
+                <element name="table" minOccurs="1" maxOccurs="unbounded">
+                    <complexType>
+                        <sequence>
+                            <!-- Assume that a table can exist only with a min of 1 column -->
+                            <element name="column" minOccurs="1" maxOccurs="unbounded">
+                                <complexType>
+                                    <sequence>
+                                        <element name="dataType" type="string"/>
+                                        <element name="columnKey" type="string"/>
+                                        <element name="references">
+                                            <complexType mixed="true">
+                                                <sequence>
+                                                    <element name="reference" minOccurs="0" maxOccurs="unbounded">
+                                                        <complexType>
+                                                            <sequence>
+                                                                <element type="string" name="referenceTable"/>
+                                                                <element type="string" name="referenceColumn"/>
+                                                            </sequence>
+                                                        </complexType>
+                                                    </element>
+                                                </sequence>
+                                            </complexType>
+                                        </element>
+                                    </sequence>
+                                    <!-- Attribute here refers to column name -->
+                                    <attribute name="name" type="string"/>        
+                                </complexType>
+                            </element>
+                        </sequence>
+                        <!-- Attribute here refers to table name -->
+                        <attribute name="name" type="string"/>
+                    </complexType>                
+                </element>
+            </sequence>
+            <!-- Attribute here refers to db name -->
+            <attribute name="name" type="string"/>
+        </complexType>
+    </element>
+</schema>
