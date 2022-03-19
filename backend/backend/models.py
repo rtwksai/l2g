@@ -70,10 +70,11 @@ class ExtractMetadata():
         return db_wrapper.tables
 
 # Used to create XML document representing the schema
+# Schema XSD in ../utils/local_rdb_schema.xsd
 class Schema():
     def __init__(self, db_name, db_wrapper):
         self.db_name = db_name
-        self.root = et.Element('schema')
+        self.root = et.Element('dbSchema', attrib=dict({'name': db_name}))
         # This is the self.tables from Database() class which is a list of tables
         self.tables = db_wrapper['database']
 
@@ -109,9 +110,9 @@ class Schema():
                 references = et.SubElement(childCol, "references")
                 for ref in col["references"]:
                     refer = et.SubElement(references, "reference")
-                    r_table =  et.SubElement(refer, "reference_table")
+                    r_table =  et.SubElement(refer, "referenceTable")
                     r_table.text = ref['table_name']
-                    r_column = et.SubElement(refer, "reference_column")
+                    r_column = et.SubElement(refer, "referenceColumn")
                     r_column.text = ref['column_name']
 
                 childTable.append(childCol)
