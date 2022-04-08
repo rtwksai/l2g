@@ -2,6 +2,7 @@ from xml.dom import minidom
 import os 
 import pyodbc
 import xml.etree.ElementTree as et
+import xmltodict
 
 class Database():
     def __init__(self):
@@ -122,8 +123,19 @@ class Schema():
         return tree
 
     # Need to refactor this code
-    def write_schema(self, location):
+    def write_schema(self, location=None):
         xml_tree = self.make_schema()
         save_path_file = "test.xml"
         with open (save_path_file, "wb") as files :
             xml_tree.write(files)
+
+class XMLParser():
+    def __init__(self):
+        pass
+
+    def parse_xml(self, file_location):
+        with open(file_location, 'r', encoding='utf-8') as file:
+            global_xml_contents = file.read()
+        converted_dict = xmltodict.parse(global_xml_contents)
+        print(converted_dict)
+        return converted_dict

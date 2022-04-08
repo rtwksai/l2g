@@ -1,6 +1,6 @@
 from curses import meta
 from backend import app
-from backend.models import Database, ExtractMetadata, Schema
+from backend.models import Database, ExtractMetadata, Schema, XMLParser
 from backend.config import configs
 
 import os
@@ -55,4 +55,6 @@ def query_db():
     metadata = emd.get_metadata(db_url, db_name, db_uname, db_pass)
     schema = Schema(db_name, metadata)
     schema.write_schema()
+    xmp = XMLParser()
+    xmp.parse_xml('/home/keiser/test1.xml')
     return metadata 
