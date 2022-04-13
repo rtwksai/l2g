@@ -23,18 +23,26 @@ def extract_table(table_od):
 def extract_xml(xml_dict):
     new_dict = {}
     len(xml_dict["dbtype"]["dbSchema"])
-    for j in xml_dict["dbtype"]["dbSchema"]:
-        list_tables = []
-        for i in j["table"]:
-            list_tables.append( extract_table(i))
-        new_dict[j["@name"]] = list_tables
+    if(type(xml_dict["dbtype"]["dbSchema"]) ==  type([]) ):
+        for j in xml_dict["dbtype"]["dbSchema"]:
+            list_tables = []
+            for i in j["table"]:
+                list_tables.append( extract_table(i))
+            new_dict[j["@name"]] = list_tables
+    else :
+        list_tables.append( extract_table(xml_dict["dbtype"]["dbSchema"]["table"]))
     return {xml_dict["dbtype"]["@name"] : new_dict}
 
 
 def extract_db(old_dict):
     list_tables = []
-    for i in old_dict["dbSchema"]["table"]:
-        list_tables.append( extract_table(i))
+
+    if(type(old_dict["dbSchema"]["table"]) ==  type([]) ):
+        for i in old_dict["dbSchema"]["table"]:
+            list_tables.append( extract_table(i))   
+    else: 
+        list_tables.append(extract_table(old_dict["dbSchema"]["table"]))
+
     
     return {old_dict["dbSchema"]["@name"] : list_tables} 
 
