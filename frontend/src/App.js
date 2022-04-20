@@ -1,15 +1,22 @@
 import './App.css';
 
-import FileUpload from './components/FileUpload'
+import {   
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
+import React from 'react';
+import SmartSuggestion from "./components/SmartSuggestion";
 import Checkout from './components/Checkout';
-// import AddressForm from './components/FileUpload';
+
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <Checkout />
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Checkout />} />
+        <Route path="/suggest" element={<SmartSuggestion />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

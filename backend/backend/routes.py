@@ -1,3 +1,4 @@
+from crypt import methods
 from curses import meta
 from backend import app
 from backend.models import Database, ExtractMetadata, Schema, XMLParser
@@ -57,4 +58,4 @@ def query_db():
     schema.write_schema()
     xmp = XMLParser()
     xmp.parse_xml('/home/keiser/test1.xml')
-    return metadata 
+    return metadata
