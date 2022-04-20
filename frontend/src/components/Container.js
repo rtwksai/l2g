@@ -82,7 +82,7 @@ export default function AppContainer({children}) {
                     </Typography>
                     </Toolbar>
                 </AppBar>
-                <Container component="main" maxWidth="sm">
+                <Container component="main" maxWidth="sm" overflow='auto'>
                     {children}
                 </Container>
                 </ThemeProvider>

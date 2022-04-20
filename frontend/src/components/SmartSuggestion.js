@@ -16,7 +16,7 @@ const Suggestion = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(1),
     textAlign: 'center',
     color: '#000000',
-    width: '98%'
+    width: '36vw'
 }));
 
 const suggestionList = {
@@ -30,24 +30,24 @@ export default function SmartSuggestion() {
     const [selected, addSelected] = useState([]);
     return (
         <AppContainer>
-            <Stack spacing={4} alignItems='center' paddingTop='3em'>
-                <Stack direction='row' alignItems='inherit' minWidth='175%' spacing={5}>
+            <Stack spacing={4} alignItems='center' paddingTop='3em' >
+                <Stack direction='row' alignItems='inherit' spacing={5}>
                     <Stack
                         direction='row'
-                        spacing='2em'                        
+                        spacing='5vw' 
                     >
                         <TextField 
                             id="input-from" 
                             label="From" 
                             variant="outlined"
-                            style = {{width: '18em'}}
+                            style = {{width: '30vw'}}
                             sx={{ input: { color: 'white' }}}
                         />
                         <TextField 
                             id="input-to" 
                             label="To" 
                             variant="outlined"
-                            style = {{width: '18em'}}
+                            style = {{width: '30vw'}}
                             sx={{ input: { color: 'white' }}}
                         />
                     </Stack>
@@ -66,21 +66,22 @@ export default function SmartSuggestion() {
                     sx={{
                         p: 2, 
                         border: '1px dashed grey',
-                        width: 1200,
+                        width: '90vw',
                         height: 450,
                     }}
                 >
                     <Stack
                         direction='row'
-                        spacing='5em'
-                        paddingLeft='1.5em'
+                        spacing='5vw'
+                        paddingLeft='2vw'
+                        paddingRight='2vw'
                     >
 
                         <Stack spacing='1em'>
                             <div>Suggestions</div>
                             <Box
                                 sx={{
-                                    width: 500,
+                                    width: '38vw',
                                     height: 350,
                                     overflow: 'auto'
                                 }}
@@ -107,7 +108,7 @@ export default function SmartSuggestion() {
                             <div>Selected</div>
                             <Box
                                 sx={{
-                                    width: 500,
+                                    width: '38vw',
                                     height: 350,
                                     overflow: 'auto'
                                 }}
@@ -116,8 +117,15 @@ export default function SmartSuggestion() {
                                     direction='column'
                                     spacing='10px'
                                 >
-                                    <Suggestion>Item 1</Suggestion>
-                                    <Suggestion>Item 2</Suggestion>
+                                    <Suggestion>Item1</Suggestion>
+                                    <Suggestion>Item1</Suggestion>
+                                    <Suggestion>Item1</Suggestion>
+                                    <Suggestion>Item1</Suggestion>
+                                    <Suggestion>Item1</Suggestion>
+                                    <Suggestion>Item1</Suggestion>
+                                    <Suggestion>Item1</Suggestion>
+                                    <Suggestion>Item1</Suggestion>
+                                    <Suggestion>Item1</Suggestion>
                                 </Stack>
                             </Box>
                         </Stack>
