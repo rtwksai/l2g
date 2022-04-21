@@ -5,18 +5,31 @@ import {
     Paper,
     Box,
     Button,
-    Text
+    IconButton
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import { borderRadius } from '@mui/system';
 
-const Suggestion = styled(Paper)(({ theme }) => ({
+const SuggestionBox = styled(Box)(({ theme }) => ({
     ...theme.typography.body2,
     padding: theme.spacing(1),
-    textAlign: 'center',
+    alignItems: 'center',
+    border: '1px dashed grey',
     color: '#000000',
     width: '36vw'
+}));
+
+const SuggestionItem = styled(Paper)(({ theme }) => ({
+    ...theme.typography.body2,
+    padding: theme.spacing(1),
+    alignItems: 'center',
+    color: '#000000',
+    width: '16vw'
 }));
 
 const suggestionList = {
@@ -39,7 +52,55 @@ export default function SmartSuggestion() {
             return obj;
         }, {});
 
-    // console.log()
+    const Suggestion = ({ from, to }) => {
+        return(
+            <Stack direction={'row'} alignItems={'center'}>
+                <SuggestionBox>
+                    <Stack spacing={2} direction={'row'} alignItems={'center'}>
+                        <SuggestionItem> {from} </SuggestionItem>
+                        <ArrowForwardIcon style={{ color: "#FFFFFF" }}/>
+                        <SuggestionItem> {to} </SuggestionItem>
+                    </Stack>
+                </SuggestionBox>
+                <IconButton 
+                    disableRipple
+                    onClick={() => addSelected([...selected, [from, to]])}
+                >
+                    <AddBoxIcon                 
+                        style={{ 
+                            backgroundColor: '#4bad7b', 
+                            borderRadius:3
+                        }} 
+                    />
+                </IconButton>
+            </Stack>
+        )
+    }
+
+    const Selection = ({ from, to}) => {
+        return(
+            <Stack direction={'row'} alignItems={'center'}>
+                <SuggestionBox>
+                    <Stack spacing={2} direction={'row'} alignItems={'center'}>
+                        <SuggestionItem> {from} </SuggestionItem>
+                        <ArrowForwardIcon style={{ color: "#FFFFFF" }}/>
+                        <SuggestionItem> {to} </SuggestionItem>
+                    </Stack>
+                </SuggestionBox>
+                <IconButton 
+                    disableRipple
+                    onClick={() => {console.log(selected)}}
+                >
+                    <RemoveCircleIcon                 
+                        style={{ 
+                            backgroundColor: '#d77272', 
+                            borderRadius:3
+                        }} 
+                    />
+                </IconButton>
+            </Stack>
+        )
+    }
 
     return (
         <AppContainer>
@@ -72,7 +133,7 @@ export default function SmartSuggestion() {
                         color='success'
                         disableRipple
                         size='large'
-                        onClick={() => addSelected([...selected, from + ' -> ' + to])}
+                        onClick={() => addSelected([...selected, [from, to, selected.length]])}
                     >
                         Add
                     </Button>
@@ -89,15 +150,15 @@ export default function SmartSuggestion() {
                     <Stack
                         direction='row'
                         spacing='5vw'
-                        paddingLeft='2.5vw'
-                        paddingRight='2.5vw'
+                        paddingLeft='2vw'
+                        paddingRight='2vw'
                     >
 
                         <Stack spacing='1em'>
                             <div>Suggestions</div>
                             <Box
                                 sx={{
-                                    width: '38vw',
+                                    width: '40.1vw',
                                     height: 350,
                                     overflow: 'auto'
                                 }}
@@ -108,7 +169,7 @@ export default function SmartSuggestion() {
                                 >
                                     {Object.entries(filteredSuggestions).map( ([key, value]) =>
                                         value.map((label) => 
-                                            <Suggestion key={label}>{label}</Suggestion> 
+                                        <Suggestion key={label} from={key} to={label}/>
                                         )                                           
                                     )}
                                 </Stack>
@@ -120,7 +181,7 @@ export default function SmartSuggestion() {
                             <div>Selected</div>
                             <Box
                                 sx={{
-                                    width: '38vw',
+                                    width: '40vw',
                                     height: 350,
                                     overflow: 'auto'
                                 }}
@@ -130,7 +191,7 @@ export default function SmartSuggestion() {
                                     spacing='10px'
                                 >
                                     {selected.map((label) => (
-                                        <Suggestion key={label}>{label}</Suggestion>
+                                        <Selection key={label} from={label[0]} to={label[1]}/>
                                     ))}
                                 </Stack>
                             </Box>

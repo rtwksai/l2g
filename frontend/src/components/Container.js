@@ -2,16 +2,14 @@ import CssBaseline from '@mui/material/CssBaseline';
 import AppBar from '@mui/material/AppBar';
 import Container from '@mui/material/Container';
 import Toolbar from '@mui/material/Toolbar';
-import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { maxHeight } from '@mui/system';
 
 const theme = createTheme({
     components: {
         MuiButton: { 
             styleOverrides: { 
-                root: { minWidth: '6em', maxHeight: '3em'} 
+                root: { maxHeight: '3em'} 
             } 
         },
         MuiTextField: {
@@ -41,6 +39,34 @@ const theme = createTheme({
                 },
             },
         },
+        MuiCssBaseline: {
+            styleOverrides: {
+                body: {
+                    scrollbarColor: "#6b6b6b #2b2b2b",
+                    "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
+                        backgroundColor: "#2b2b2b",
+                },
+                "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
+                    borderRadius: 8,
+                    backgroundColor: "#6b6b6b",
+                    minHeight: 24,
+                    border: "3px solid #2b2b2b",
+                },
+                "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus": {
+                    backgroundColor: "#959595",
+                },
+                "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active": {
+                    backgroundColor: "#959595",
+                },
+                "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover": {
+                    backgroundColor: "#959595",
+                },
+                "&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner": {
+                    backgroundColor: "#2b2b2b",
+                },
+                },
+            },
+        },
         MuiFormHelperText: {
             styleOverrides: {
                 root: {
@@ -51,20 +77,6 @@ const theme = createTheme({
         },
     },
 });
-
-function Copyright() {
-    return (
-        <Typography variant="body2" color="text.secondary" align="center">
-            {'Copyright © '}
-            <Link color="inherit" href="https://mui.com/">
-                Your Website
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
-
 
 export default function AppContainer({children}) {
     return (
