@@ -13,7 +13,6 @@ import AddIcon from '@mui/icons-material/Add';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import { borderRadius } from '@mui/system';
 
 const SuggestionBox = styled(Box)(({ theme }) => ({
     ...theme.typography.body2,
@@ -41,9 +40,18 @@ const suggestionList = {
 
 export default function SmartSuggestion() {
     
-    const [selected, addSelected] = useState([]);
+    const [selected, setSelected] = useState([]);
     const [from, setFrom] = useState('');
     const [to, setTo] = useState();
+
+    function handleRemove(id) {
+        const newList = selected.filter((item) => item[0]+item[1] !== id);
+        setSelected(newList);
+    }
+
+    function handleAdd(from, to) {
+        setSelected(selected => [...selected, [from, to]]);
+    }
 
     const filteredSuggestions = Object.keys(suggestionList)
         .filter(key => key.toLowerCase().includes(from))
@@ -64,7 +72,7 @@ export default function SmartSuggestion() {
                 </SuggestionBox>
                 <IconButton 
                     disableRipple
-                    onClick={() => addSelected([...selected, [from, to]])}
+                    onClick={() => handleAdd(from, to)}
                 >
                     <AddBoxIcon                 
                         style={{ 
@@ -77,7 +85,7 @@ export default function SmartSuggestion() {
         )
     }
 
-    const Selection = ({ from, to}) => {
+    const Selection = ({ from, to }) => {
         return(
             <Stack direction={'row'} alignItems={'center'}>
                 <SuggestionBox>
@@ -89,7 +97,7 @@ export default function SmartSuggestion() {
                 </SuggestionBox>
                 <IconButton 
                     disableRipple
-                    onClick={() => {console.log(selected)}}
+                    onClick={() => handleRemove(from+to)}
                 >
                     <RemoveCircleIcon                 
                         style={{ 
@@ -106,10 +114,7 @@ export default function SmartSuggestion() {
         <AppContainer>
             <Stack spacing={4} alignItems='center' paddingTop='3em' >
                 <Stack direction='row' alignItems='inherit' spacing={5}>
-                    <Stack
-                        direction='row'
-                        spacing='5vw' 
-                    >
+                    <Stack direction='row' spacing='5vw'>
                         <TextField 
                             id="input-from" 
                             label="From" 
@@ -133,7 +138,7 @@ export default function SmartSuggestion() {
                         color='success'
                         disableRipple
                         size='large'
-                        onClick={() => addSelected([...selected, [from, to, selected.length]])}
+                        onClick={() => handleAdd([from, to])}
                     >
                         Add
                     </Button>
@@ -169,7 +174,7 @@ export default function SmartSuggestion() {
                                 >
                                     {Object.entries(filteredSuggestions).map( ([key, value]) =>
                                         value.map((label) => 
-                                        <Suggestion key={label} from={key} to={label}/>
+                                        <Suggestion key={key+label} from={key} to={label}/>
                                         )                                           
                                     )}
                                 </Stack>
@@ -191,14 +196,13 @@ export default function SmartSuggestion() {
                                     spacing='10px'
                                 >
                                     {selected.map((label) => (
-                                        <Selection key={label} from={label[0]} to={label[1]}/>
+                                        <Selection key={label[0]+label[1]} from={label[0]} to={label[1]}/>
                                     ))}
                                 </Stack>
                             </Box>
                         </Stack>
                     </Stack>
                 </Box>    
-
             </Stack>
         </AppContainer>
     )
