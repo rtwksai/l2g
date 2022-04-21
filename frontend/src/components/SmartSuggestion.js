@@ -20,14 +20,27 @@ const Suggestion = styled(Paper)(({ theme }) => ({
 }));
 
 const suggestionList = {
-    'db1.c2.t2': [], 
-    'db2.c2.t3': [], 
-    'db2.c3.t4': [], 
-    'db2.c3.t5': []
+    'db1.c2.t2': ['hi', 'hello'], 
+    'db2.c2.t3': ['hola', 'amigo'], 
+    'db2.c3.t4': ['cente', 'lacartel'], 
+    'db2.c3.t5': ['dm', 'testign']
 }
 
 export default function SmartSuggestion() {
+    
     const [selected, addSelected] = useState([]);
+    const [from, setFrom] = useState('');
+    const [to, setTo] = useState();
+
+    const filteredSuggestions = Object.keys(suggestionList)
+        .filter(key => key.toLowerCase().includes(from))
+        .reduce((obj, key) => {
+            obj[key] = suggestionList[key];
+            return obj;
+        }, {});
+
+    // console.log()
+
     return (
         <AppContainer>
             <Stack spacing={4} alignItems='center' paddingTop='3em' >
@@ -42,6 +55,7 @@ export default function SmartSuggestion() {
                             variant="outlined"
                             style = {{width: '30vw'}}
                             sx={{ input: { color: 'white' }}}
+                            onChange={(e) => setFrom(e.target.value.toLowerCase())}
                         />
                         <TextField 
                             id="input-to" 
@@ -49,6 +63,7 @@ export default function SmartSuggestion() {
                             variant="outlined"
                             style = {{width: '30vw'}}
                             sx={{ input: { color: 'white' }}}
+                            onChange={(e) => setTo(e.target.value.toLowerCase())}
                         />
                     </Stack>
                     <Button 
@@ -57,6 +72,7 @@ export default function SmartSuggestion() {
                         color='success'
                         disableRipple
                         size='large'
+                        onClick={() => addSelected([...selected, from + ' -> ' + to])}
                     >
                         Add
                     </Button>
@@ -73,8 +89,8 @@ export default function SmartSuggestion() {
                     <Stack
                         direction='row'
                         spacing='5vw'
-                        paddingLeft='2vw'
-                        paddingRight='2vw'
+                        paddingLeft='2.5vw'
+                        paddingRight='2.5vw'
                     >
 
                         <Stack spacing='1em'>
@@ -90,15 +106,11 @@ export default function SmartSuggestion() {
                                     direction='column'
                                     spacing='10px'
                                 >
-                                    <Suggestion>Item1</Suggestion>
-                                    <Suggestion>Item1</Suggestion>
-                                    <Suggestion>Item1</Suggestion>
-                                    <Suggestion>Item1</Suggestion>
-                                    <Suggestion>Item1</Suggestion>
-                                    <Suggestion>Item1</Suggestion>
-                                    <Suggestion>Item1</Suggestion>
-                                    <Suggestion>Item1</Suggestion>
-                                    <Suggestion>Item1</Suggestion>
+                                    {Object.entries(filteredSuggestions).map( ([key, value]) =>
+                                        value.map((label) => 
+                                            <Suggestion key={label}>{label}</Suggestion> 
+                                        )                                           
+                                    )}
                                 </Stack>
                             </Box>
                         </Stack>
@@ -117,15 +129,9 @@ export default function SmartSuggestion() {
                                     direction='column'
                                     spacing='10px'
                                 >
-                                    <Suggestion>Item1</Suggestion>
-                                    <Suggestion>Item1</Suggestion>
-                                    <Suggestion>Item1</Suggestion>
-                                    <Suggestion>Item1</Suggestion>
-                                    <Suggestion>Item1</Suggestion>
-                                    <Suggestion>Item1</Suggestion>
-                                    <Suggestion>Item1</Suggestion>
-                                    <Suggestion>Item1</Suggestion>
-                                    <Suggestion>Item1</Suggestion>
+                                    {selected.map((label) => (
+                                        <Suggestion key={label}>{label}</Suggestion>
+                                    ))}
                                 </Stack>
                             </Box>
                         </Stack>
