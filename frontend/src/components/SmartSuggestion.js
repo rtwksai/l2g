@@ -138,7 +138,7 @@ export default function SmartSuggestion() {
                         color='success'
                         disableRipple
                         size='large'
-                        onClick={() => handleAdd([from, to])}
+                        onClick={() => handleAdd(from, to)}
                     >
                         Add
                     </Button>
