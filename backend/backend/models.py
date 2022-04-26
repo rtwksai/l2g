@@ -1,5 +1,3 @@
-from xml.dom import minidom
-import os 
 import pyodbc
 import xml.etree.ElementTree as et
 import xmltodict

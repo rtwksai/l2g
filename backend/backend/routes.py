@@ -59,3 +59,22 @@ def query_db():
     xmp = XMLParser()
     xmp.parse_xml('/home/keiser/test1.xml')
     return metadata
+
+
+'''
+Request Type
+- GET from /suggest
+
+Inputs
+- selected suggestions
+
+Outputs
+- Global XML file
+'''
+@app.route('/gschema', methods=['GET'])
+def generate_global_schema():
+    logger.info("Generate global schema")
+    # Parse the input: Find from and to
+    # Find the global xml file
+    # Append the data in their respective parts.
+    # return the global xml file
