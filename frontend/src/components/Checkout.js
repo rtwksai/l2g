@@ -10,18 +10,20 @@ import FileUpload from './FileUpload';
 import SelectType from './SelectType';
 import SqlForm from './SqlForm';
 import ControlledTreeView from './TreeView';
+import  { Navigate } from 'react-router-dom'
 
 // npm i @material-ui/lab
 
 const sql_steps = ['Select Schema Type', 'Upload Local Schema', 'View Local Schema', 'Obtain Global Schema'];
 const csv_steps = ['Select Schema Type', 'Upload Local Schema', 'View Local Schema', 'Obtain Global Schema'];
-const steps = [ 'Upload SQL details', 'View SQL', "Upload CSV", "View CSV"];
+const steps = [ 'Upload SQL details', 'View SQL', "Upload CSV", "Suggestions"];
 
 
 export default function Checkout() {
 
   const [activeStep, setActiveStep] = React.useState(0);
   const [schemaType, setSchemaType] = React.useState('');
+  
 
 
   function onChange_schemaType(newSchemaType) {
@@ -40,11 +42,7 @@ export default function Checkout() {
       case 2:
         return <FileUpload />;
       case 3:
-        return (
-          <link to="/suggest">
-          <Button>Generate Suggestions </Button>
-          </link>
-        )
+        return <Navigate to="/suggest" />
        
       default:
         throw new Error('Unknown step');
@@ -90,7 +88,7 @@ export default function Checkout() {
                   onClick={handleNext}
                   sx={{ mt: 3, ml: 1 }}
                 >
-                  {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
+                  {activeStep === steps.length - 2 ? 'Generate Suggestions' : 'Next'}
                 </Button>
               </Box>
             </React.Fragment>
