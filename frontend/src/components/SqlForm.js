@@ -102,6 +102,7 @@ export default function SqlForm() {
             fullWidth
             autoComplete="cc-name"
             variant="standard"
+            placeholder="DB Username"
             onChange={handleInput}
             
           />
@@ -116,6 +117,7 @@ export default function SqlForm() {
             autoComplete="cc-number"
             variant="standard"
             type={"password"}
+            placeholder="password"
             onChange={handleInput}
           />
         </Grid>
@@ -128,6 +130,7 @@ export default function SqlForm() {
             fullWidth
             autoComplete="cc-exp"
             variant="standard"
+            placeholder="DB Name"
             onChange={handleInput}
           />
         </Grid>
@@ -141,6 +144,7 @@ export default function SqlForm() {
             fullWidth
             autoComplete="cc-csc"
             variant="standard"
+            placeholder="DB URL"
             onChange={handleInput}
           />
         
