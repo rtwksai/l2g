@@ -156,7 +156,7 @@ export default function ControlledTreeView() {
 
 
     <Box>
-      <Button type="button" onClick={sellectAll()}>Sellect All </Button>
+      <Button type="button" onClick={sellectAll}>Sellect All </Button>
       <TreeView
         classes={classesView}
         defaultCollapseIcon={<ExpandMoreIcon />}

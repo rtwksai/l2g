@@ -40,9 +40,12 @@ export default function Checkout() {
       case 2:
         return <FileUpload />;
       case 3:
-        return <ControlledTreeView />;
-        case 4:
-          
+        return (
+          <link to="/suggest">
+          <Button>Generate Suggestions </Button>
+          </link>
+        )
+       
       default:
         throw new Error('Unknown step');
     }
