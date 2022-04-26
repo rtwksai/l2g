@@ -57,5 +57,5 @@ def query_db():
     schema = Schema(db_name, metadata)
     schema.write_schema()
     xmp = XMLParser()
-    xmp.parse_xml('/home/keiser/test1.xml')
+    # xmp.parse_xml('/home/keiser/test1.xml')
     return metadata
