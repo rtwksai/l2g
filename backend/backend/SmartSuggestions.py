@@ -26,12 +26,10 @@ def extract_table(table_od):
 
 def extract_xml(xml_dict):
     new_dict = {}
-    print(xml_dict.keys())
-    print(len(xml_dict["dbType"]["dbSchema"]))
+    # print(len(xml_dict["dbType"]["dbSchema"]))
     if(type(xml_dict["dbType"]["dbSchema"]) ==  type([]) ):
         for j in xml_dict["dbType"]["dbSchema"]:
             list_tables = []
-            print()
             for i in j["table"]:
                 if type(i) != str:
                     list_tables.append(extract_table(i))
@@ -53,8 +51,8 @@ def extract_db(old_dict):
     return {old_dict["dbSchema"]["@name"] : list_tables} 
 
 
-old_dict = parse_xml("/home/k_udupa/Sem8/DM/Project/l2g/backend/backend/test_dump.xml")
-# old_dict = parse_xml("/home/k_udupa/Sem8/DM/Project/test1.xml")
+# old_dict = parse_xml("/home/k_udupa/Sem8/DM/Project/l2g/backend/backend/test_dump.xml")
+old_dict = parse_xml("/home/k_udupa/Sem8/DM/Project/test1.xml")
 new_dict = extract_xml(old_dict)
 
 
@@ -146,8 +144,7 @@ class SmartSuggestions():
         return False
             
 
-main_col = {"col_name": "dnum", "data_type": "smallint"}
 suggestor = SmartSuggestions()
-suggestor.get_data(new_dict)
+suggestor.get_data(new_dict) # This will save the global xml file into the object variable.
 suggestor.exhaustive_search()
 print("Similar columns =", suggestor.full_similar_cols)
