@@ -77,17 +77,12 @@ export default function ControlledTreeView() {
   };
 
   const read_sql_data = JSON.parse(window.localStorage.getItem("sql_data"))['data'];
-
-  // console.log(read_sql_data);
-
   const getColumns = (dict_col_data) => {
     let label_ = dict_col_data['column_name'];
     return <TreeItem classes={classesItem} nodeId={label_} label={label_} />
   }
 
   const getTables = (dict_table_data) => {
-    // console.log(dict_table_data);
-    // console.log(Object.keys(dict_table_data));
     let label_table_name = Object.keys(dict_table_data)[0];
 
     const to_be_returned = dict_table_data[label_table_name].map(getColumns);
@@ -100,7 +95,7 @@ export default function ControlledTreeView() {
 
 
 
-  const sellectAll = (event) => {
+  const selectAll = (event) => {
     read_sql_data["database"].map((t) => {
       const name = t[0];
       if (selected.includes(name)) {
@@ -156,7 +151,7 @@ export default function ControlledTreeView() {
 
 
     <Box>
-      <Button type="button" onClick={sellectAll}>Sellect All </Button>
+      <Button type="button" onClick={selectAll}>select All </Button>
       <TreeView
         classes={classesView}
         defaultCollapseIcon={<ExpandMoreIcon />}

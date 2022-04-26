@@ -86,7 +86,7 @@ export default function SqlForm() {
     return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
-        File Type = 
+        Upload your SQL details here
       </Typography>
       <form onSubmit={handleSubmission}>
 
