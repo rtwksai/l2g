@@ -6,14 +6,18 @@ import pyodbc
 import xml.etree.ElementTree as et
 import xmltodict
 import pandas as pd
+import zipfile
 
 class Schema_from_multi_CSVDB():
 
-    def __init__(self, multiDB_path):
+    def __init__(self):
 
         self.root_root = et.Element('dbType', attrib=dict({'name' : "CSV"}))
+        
+        with zipfile.ZipFile('./backend/csv_uploads/csv_databases.zip', 'r') as zip_ref:
+            zip_ref.extractall('./backend/csv_uploads/')
 
-        rootdir = multiDB_path
+        rootdir = './backend/csv_uploads/csv_databases'
 
         self.dbs = []
         self.dbTrees = []
@@ -44,7 +48,7 @@ class Schema_from_multi_CSVDB():
     # Need to refactor this code
     def write_schema(self, location=None):
         xml_tree = self.make_schema()
-        save_path_file = "../xml_outputs/csv_databases_dump.xml"
+        save_path_file = "./backend/xml_outputs/csv_databases_dump.xml"
         with open (save_path_file, "wb") as files :
             xml_tree.write(files)
 
@@ -131,9 +135,27 @@ class Schema_from_CSVDB():
 
 
 
+class Concatenate_SQL_CSV():
+
+    def __init__(self, path_to_dumps):
+        
+        tree_sql = et.parse(path_to_dumps + 'sql_databases_dump.xml')
+        root_sql = tree_sql.getroot()
+
+        tree_csv = et.parse(path_to_dumps + 'csv_databases_dump.xml')
+        root_csv = tree_csv.getroot()
+
+        main_root = et.Element('consolidatedDB', attrib=dict({}))
+        main_root.append(root_sql)
+        main_root.append(root_csv)
+
+        tree = et.ElementTree(main_root)
+        
+        tree.write(path_to_dumps + 'consolidated_csv_sql.xml')
+
 
 
 
 if(__name__=="__main__"):
-    schema = Schema_from_multi_CSVDB('/home/soham/dm_lab/Data/Project-Raw-Data-Input/csv_databases')
-    schema.write_schema()
+    schema = Concatenate_SQL_CSV('./backend/xml_outputs/')
+    # schema.write_schema()
