@@ -173,11 +173,6 @@ class Schema_from_multi_CSVDB():
                 its_root = schema.make_schema().getroot()
                 self.dbTrees.append(its_root)
 
-        
-        
-            
-        
-
     def make_schema(self):
         tree = et.ElementTree(self.root_root)
         tree_root = self.root_root # 
@@ -285,3 +280,42 @@ class Concatenate_SQL_CSV():
         
         tree.write(path_to_dumps + 'consolidated_csv_sql.xml')
 
+class Global_Schema():
+    def __init__(self, path_to_dumps='./backend/xml_outputs/'):
+        self.path_to_dumps = path_to_dumps
+
+    def merge_selected_suggestion(self, suggestion):
+        from_parsed_list = suggestion[0].split('.')
+        db_type = from_parsed_list[0]
+        db_name = from_parsed_list[1]
+        db_table = from_parsed_list[2]
+        db_column = from_parsed_list[3]
+        to_parsed_list = suggestion[1].split('.')
+        to_db_type = to_parsed_list[0]
+        to_db_name = to_parsed_list[1]
+        to_db_table = to_parsed_list[2]
+        to_db_column = to_parsed_list[3]
+        
+        xml_root = et.parse(self.path_to_dumps + 'consolidated_csv_sql.xml').getroot()
+        print(xml_root)
+        for dbtype in xml_root.findall(".//dbType[@name='{0}']".format(db_type)):
+            for dbname in dbtype.findall(".//dbSchema[@name='{0}']".format(db_name)):
+                for dbtable in dbname.findall(".//table[@name='{0}']".format(db_table)):
+                    for dbcolumn in dbtable.findall(".//column[@name='{0}']".format(db_column)):
+                        refer = dbcolumn.find('references')
+                        reference = et.SubElement(refer, "reference")
+                        r_table =  et.SubElement(reference, "referenceType")
+                        r_table.text = to_db_type
+                        r_table =  et.SubElement(reference, "referenceDB")
+                        r_table.text = to_db_name
+                        r_table =  et.SubElement(reference, "referenceTable")
+                        r_table.text = to_db_table
+                        r_column = et.SubElement(reference, "referenceColumn")
+                        r_column.text = to_db_column
+
+        tree = et.ElementTree(xml_root)        
+        tree.write(self.path_to_dumps + 'consolidated_csv_sql.xml')
+
+# if __name__ == '__main__':
+#     gs = Global_Schema()
+#     gs.merge_selected_suggestion(['SQL.companydb.department.dnumber', 'CSV.companydb2.department1.dnumber1'])

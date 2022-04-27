@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -29,21 +29,29 @@ const SuggestionItem = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(1),
     alignItems: 'center',
     color: '#000000',
-    width: '16vw'
+    width: '16vw',
+    overflow: 'auto'
 }));
 
-const suggestionList = {
-    'db1.c2.t2': ['hi', 'hello'], 
-    'db2.c2.t3': ['hola', 'amigo'], 
-    'db2.c3.t4': ['cente', 'lacartel'], 
-    'db2.c3.t5': ['dm', 'testign']
-}
+// const suggestionList = {
+//     'db1.c2.t2': ['hi', 'hello'], 
+//     'db2.c2.t3': ['hola', 'amigo'], 
+//     'db2.c3.t4': ['cente', 'lacartel'], 
+//     'db2.c3.t5': ['dm', 'testign']
+// }
 
 export default function SmartSuggestion() {
     
     const [selected, setSelected] = useState([]);
     const [from, setFrom] = useState('');
     const [to, setTo] = useState();
+    const [suggestionList, setSuggestionList] = useState(null);
+
+    useEffect(async ()=>{
+        const result = await http.get('/get-suggestions')
+        console.log(result.data)
+        setSuggestionList(result.data);
+    }, []);
 
     const http = axios.create({
 		baseURL: "http://localhost:5000",
@@ -53,8 +61,14 @@ export default function SmartSuggestion() {
 	});
 
     function getSuggestions() {
-        // Query the dictionary from udupa's backend
-        // set the global value as that state
+        return http.get('/get-suggestions')
+        .then((response) => {return response.data})
+        .then((result) => {
+            console.log('Success:', result);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
     }
 
     function handleRemove(id) {
@@ -68,11 +82,9 @@ export default function SmartSuggestion() {
 
     // Send the data to the backend to generate the final XML document
     function handleGenerate() {
-        http.get("./gschema", {
-            params: {
-                suggestion_dict: selected
-            }
-        })
+        var sendFormData = new FormData();
+        sendFormData.append('suggestion_dict', selected)
+        http.post("./gschema", sendFormData)
         .then((response) => window.localStorage.setItem("suggestion_data", JSON.stringify(response)))
         .then((result) => {
             console.log('Success:', result);
@@ -83,13 +95,13 @@ export default function SmartSuggestion() {
         
     }
 
-    const filteredSuggestions = Object.keys(suggestionList)
-        .filter(key => key.toLowerCase().includes(from))
-        .reduce((obj, key) => {
-            obj[key] = suggestionList[key];
-            return obj;
-        }, {});
-
+    const filteredSuggestions = suggestionList && Object.keys(suggestionList)
+    .filter(key => key.toLowerCase().includes(from))
+    .reduce((obj, key) => {
+        obj[key] = suggestionList[key];
+        return obj;
+    }, {});
+    
     const Suggestion = ({ from, to }) => {
         return(
             <Stack direction={'row'} alignItems={'center'}>
@@ -202,7 +214,7 @@ export default function SmartSuggestion() {
                                     direction='column'
                                     spacing='10px'
                                 >
-                                    {Object.entries(filteredSuggestions).map( ([key, value]) =>
+                                    {filteredSuggestions && Object.entries(filteredSuggestions).map( ([key, value]) =>
                                         value.map((label) => 
                                         <Suggestion key={key+label} from={key} to={label}/>
                                         )                                           

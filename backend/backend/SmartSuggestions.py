@@ -1,59 +1,63 @@
 import nltk
-# nltk.download('wordnet')
-# print(nltk.data.path)
-# from nltk.corpus import WordNet
 from nltk.corpus import *
 import xmltodict
 import editdistance
 
-def parse_xml(file_location):
-    with open(file_location, 'r', encoding='utf-8') as file:
-        global_xml_contents = file.read()
-    converted_dict = xmltodict.parse(global_xml_contents)
-    return converted_dict
+
+class Preparator():
+    def __init__(self):
+        pass
+
+    def parse_xml(self, file_location):
+        with open(file_location, 'r', encoding='utf-8') as file:
+            global_xml_contents = file.read()
+        converted_dict = xmltodict.parse(global_xml_contents)
+        return converted_dict
+
+    # Updated table_od -> table_od[0]
+    def extract_table(self, table_od):
+        print(table_od)
+        col_list = []
+        if(type(table_od[1]["column"]) ==  type([]) ):
+            for i in table_od[1]["column"]:
+                col_list.append({"col_name":i["@name"], "data_type" : i["dataType"] })
+                
+        else: 
+            col_list.append({"col_name":table_od[1]["column"]["@name"], "data_type" : table_od[1]["column"]["dataType"] })
+        return { table_od[1]["@name"] : col_list}
 
 
-def extract_table(table_od):
-    col_list = []
-    if(type(table_od["column"]) ==  type([]) ):
-        for i in table_od["column"]:
-            col_list.append({"col_name":i["@name"], "data_type" : i["dataType"] })
-            
-    else: 
-        col_list.append({"col_name":table_od["column"]["@name"], "data_type" : table_od["column"]["dataType"] })
-    return { table_od["@name"] : col_list}
+    # fix this to work with consolidated xml
+    def extract_xml(self, xml_dict):
+        new_dict = {}
+        list_tables = []
+        if(type(xml_dict["dbType"]["dbSchema"]) ==  type([]) ):
+            for j in xml_dict["dbType"]["dbSchema"]:
+                list_tables = []
+                for i in j["table"]:
+                    if type(i) != str:
+                        list_tables.append(self.extract_table(i))
+                new_dict[j["@name"]] = list_tables
+        else :
+            list_tables.append( self.extract_table(xml_dict["dbType"]["dbSchema"]["table"]))
+        return {xml_dict["dbType"]["@name"] : new_dict}
 
 
-def extract_xml(xml_dict):
-    new_dict = {}
-    # print(len(xml_dict["dbType"]["dbSchema"]))
-    if(type(xml_dict["dbType"]["dbSchema"]) ==  type([]) ):
-        for j in xml_dict["dbType"]["dbSchema"]:
-            list_tables = []
-            for i in j["table"]:
-                if type(i) != str:
-                    list_tables.append(extract_table(i))
-            new_dict[j["@name"]] = list_tables
-    else :
-        list_tables.append( extract_table(xml_dict["dbType"]["dbSchema"]["table"]))
-    return {xml_dict["dbType"]["@name"] : new_dict}
+    def extract_db(self, old_dict):
+        list_tables = []
+        if(type(old_dict["dbSchema"]["table"]) ==  type([]) ):
+            for i in old_dict["dbSchema"]["table"]:
+                list_tables.append( self.extract_table(i))   
+        else: 
+            list_tables.append(self.extract_table(old_dict["dbSchema"]["table"]))
 
-
-def extract_db(old_dict):
-    list_tables = []
-    if(type(old_dict["dbSchema"]["table"]) ==  type([]) ):
-        for i in old_dict["dbSchema"]["table"]:
-            list_tables.append( extract_table(i))   
-    else: 
-        list_tables.append(extract_table(old_dict["dbSchema"]["table"]))
-
-    
-    return {old_dict["dbSchema"]["@name"] : list_tables} 
+        
+        return {old_dict["dbSchema"]["@name"] : list_tables} 
 
 
 # old_dict = parse_xml("/home/k_udupa/Sem8/DM/Project/l2g/backend/backend/test_dump.xml")
-old_dict = parse_xml("/home/k_udupa/Sem8/DM/Project/test1.xml")
-new_dict = extract_xml(old_dict)
+# old_dict = parse_xml("/home/k_udupa/Sem8/DM/Project/test1.xml")
+# new_dict = extract_xml(old_dict)
 
 
 class SmartSuggestions():
@@ -144,7 +148,7 @@ class SmartSuggestions():
         return False
             
 
-suggestor = SmartSuggestions()
-suggestor.get_data(new_dict) # This will save the global xml file into the object variable.
-suggestor.exhaustive_search()
-print("Similar columns =", suggestor.full_similar_cols)
+# suggestor = SmartSuggestions()
+# suggestor.get_data(new_dict) # This will save the global xml file into the object variable.
+# suggestor.exhaustive_search()
+# print("Similar columns =", suggestor.full_similar_cols)
