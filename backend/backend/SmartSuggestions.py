@@ -16,32 +16,72 @@ class Preparator():
 
     # Updated table_od -> table_od[0]
     def extract_table(self, table_od):
-        print(table_od)
+        # print(table_od)
         col_list = []
-        if(type(table_od[1]["column"]) ==  type([]) ):
-            for i in table_od[1]["column"]:
+        if(type(table_od["column"]) ==  type([]) ):
+            for i in table_od["column"]:
                 col_list.append({"col_name":i["@name"], "data_type" : i["dataType"] })
                 
         else: 
-            col_list.append({"col_name":table_od[1]["column"]["@name"], "data_type" : table_od[1]["column"]["dataType"] })
-        return { table_od[1]["@name"] : col_list}
+            col_list.append({"col_name":table_od["column"]["@name"], "data_type" : table_od["column"]["dataType"] })
+        return { table_od["@name"] : col_list}
 
 
     # fix this to work with consolidated xml
     def extract_xml(self, xml_dict):
         new_dict = {}
+        dict_db = {}
         list_tables = []
-        if(type(xml_dict["dbType"]["dbSchema"]) ==  type([]) ):
-            for j in xml_dict["dbType"]["dbSchema"]:
+        if(type(xml_dict['consolidatedDB']["dbType"]) ==  type([]) ):
+            for j in xml_dict['consolidatedDB']["dbType"]:
                 list_tables = []
-                for i in j["table"]:
-                    if type(i) != str:
-                        list_tables.append(self.extract_table(i))
-                new_dict[j["@name"]] = list_tables
+                # print(j['dbSchema']['table'])
+                # print('*'*30)
+                if(type(j["dbSchema"]) == type([])):
+                    for k in j["dbSchema"]:
+                        if(type(k["table"]) ==  type([]) ):
+                            for i in k["table"]:
+                                list_tables.append( self.extract_table(i))   
+                        else: 
+                            # print(k["table"])
+                            list_tables.append(self.extract_table(k["table"]))
+                        dict_db[k["@name"]] = list_tables
+                else:
+                    if(type(j["dbSchema"]["table"]) ==  type([]) ):
+                        for i in j["dbSchema"]["table"]:
+                            list_tables.append( self.extract_table(i))   
+                    else: 
+                        list_tables.append(self.extract_table(j["dbSchema"]["table"]))
+                    dict_db[j["dbSchema"]["@name"]] = list_tables
+                # dict_db[j["dbSchema"]["@name"]] = list_tables
+            new_dict[j["@name"]] = dict_db
+                # print(j['dbSchema']['table'])
+                # for _table in j['dbSchema']['table']:
+                #     list_tables.append(self.extract_table(_table))
+                # new_dict[j["@name"]] = list_tables
         else :
-            list_tables.append( self.extract_table(xml_dict["dbType"]["dbSchema"]["table"]))
-        return {xml_dict["dbType"]["@name"] : new_dict}
+            list_tables = []
+            # print(xml_dict['consolidatedDB']["dbType"]['dbSchema']['table'])
+            # print('*'*30)
+            if(type(xml_dict['consolidatedDB']["dbType"]["dbSchema"]) == type([])):
+                for k in xml_dict['consolidatedDB']["dbType"]["dbSchema"]:
+                    if(type(k["table"]) ==  type([]) ):
+                            for i in k["table"]:
+                                list_tables.append( self.extract_table(i))   
+                    else: 
+                        list_tables.append(self.extract_table(k["table"]))
+                    dict_db[k["@name"]] = list_tables
+            else:    
+                if(type(xml_dict['consolidatedDB']["dbType"]["dbSchema"]["table"]) ==  type([]) ):
+                    for i in xml_dict['consolidatedDB']["dbType"]["dbSchema"]["table"]:
+                        list_tables.append( self.extract_table(i))   
+                else: 
+                    list_tables.append(self.extract_table(xml_dict['consolidatedDB']["dbType"]["dbSchema"]["table"]))
 
+                dict_db[xml_dict['consolidatedDB']["dbType"]["dbSchema"]["@name"]] = list_tables
+            new_dict[xml_dict['consolidatedDB']["dbType"]["@name"]] = dict_db
+        # print(new_dict)
+        return new_dict
 
     def extract_db(self, old_dict):
         list_tables = []
@@ -138,6 +178,7 @@ class SmartSuggestions():
 
     # Module-3 Vocabulary match.
     def vocabMatch(self, col1, col2):
+        nltk.data.path.append('./nltk_data/')
         synonyms = []
         for syn in wordnet.synsets(col2['col_name']):
             for i in syn.lemmas():
@@ -152,3 +193,8 @@ class SmartSuggestions():
 # suggestor.get_data(new_dict) # This will save the global xml file into the object variable.
 # suggestor.exhaustive_search()
 # print("Similar columns =", suggestor.full_similar_cols)
+
+# if __name__ =='__main__':
+#     preparator = Preparator()
+#     old_dict = preparator.parse_xml('./xml_outputs/consolidated_csv_sql.xml')        
+#     new_dict = preparator.extract_xml(old_dict)

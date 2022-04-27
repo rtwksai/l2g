@@ -59,7 +59,7 @@ def query_db():
     schema = Schema(db_name, metadata)
     schema.write_schema()
     xmp = XMLParser()
-    xmp.parse_xml('./backend/xml_utilities/test1.xml')
+    xmp.parse_xml('./backend/xml_outputs/sql_databases_dump.xml')
     return metadata
 
 
@@ -92,16 +92,16 @@ def generate_suggestions():
     logger.info("Generate suggestions")
     suggestor = SmartSuggestions()
     preparator = Preparator()
-    old_dict = preparator.parse_xml('./backend/xml_utilities/test1.xml')
+    old_dict = preparator.parse_xml('./backend/xml_outputs/consolidated_csv_sql.xml')        
     new_dict = preparator.extract_xml(old_dict)
     suggestor.get_data(new_dict)
     suggestor.exhaustive_search()
-    # return suggestor.full_similar_cols
-    suggestions = {
-        'SQL.companydb.department.dnumber': ['CSV.companydb2.department1.dnumber1', 'SQL.companydb2.department1.dnumber1'],
-        'SQL.companydb.employee.ssn': ['CSV.companydb2.department1.ssn1', 'SQL.companydb2.department1.ssn1'],
-    }
-    return suggestions
+    return suggestor.full_similar_cols
+    # suggestions = {
+    #     'SQL.companydb.department.dnumber': ['CSV.companydb2.department1.dnumber1', 'SQL.companydb2.department1.dnumber1'],
+    #     'SQL.companydb.employee.ssn': ['CSV.companydb2.department1.ssn1', 'SQL.companydb2.department1.ssn1'],
+    # }
+    # return suggestions
 
 '''
 Request Type

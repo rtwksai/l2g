@@ -78,8 +78,8 @@ class ExtractMetadata():
 class Schema():
     def __init__(self, db_name, db_wrapper):
         self.db_name = db_name
-        self.root = et.Element('dbType', attrib=dict({'name': db_name}))
-        self.schema_root = et.SubElement(self.root, 'dbSchema', attrib=dict({'name': "dbSchema"}))
+        self.root = et.Element('dbType', attrib=dict({'name': 'SQL'}))
+        self.schema_root = et.SubElement(self.root, 'dbSchema', attrib=dict({'name': db_name}))
         # self.root = et.Element('dbSchema', attrib=dict({'name': db_name}))
         # This is the self.tables from Database() class which is a list of tables
         self.tables = db_wrapper['database']
@@ -134,7 +134,7 @@ class Schema():
     # Need to refactor this code
     def write_schema(self, location=None):
         xml_tree = self.make_schema()
-        save_path_file = "./backend/xml_utilities/test1.xml"
+        save_path_file = "./backend/xml_outputs/sql_databases_dump.xml"
         with open (save_path_file, "wb") as files :
             xml_tree.write(files)
 

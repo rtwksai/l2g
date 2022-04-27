@@ -96,7 +96,7 @@ export default function SmartSuggestion() {
     }
 
     const filteredSuggestions = suggestionList && Object.keys(suggestionList)
-    .filter(key => key.toLowerCase().includes(from))
+    .filter(key => key.toLowerCase().includes(from.toLowerCase()))
     .reduce((obj, key) => {
         obj[key] = suggestionList[key];
         return obj;
@@ -163,7 +163,7 @@ export default function SmartSuggestion() {
                             variant="outlined"
                             style = {{width: '30vw'}}
                             sx={{ input: { color: 'white' }}}
-                            onChange={(e) => setFrom(e.target.value.toLowerCase())}
+                            onChange={(e) => setFrom(e.target.value)}
                         />
                         <TextField 
                             id="input-to" 
@@ -171,7 +171,7 @@ export default function SmartSuggestion() {
                             variant="outlined"
                             style = {{width: '30vw'}}
                             sx={{ input: { color: 'white' }}}
-                            onChange={(e) => setTo(e.target.value.toLowerCase())}
+                            onChange={(e) => setTo(e.target.value)}
                         />
                     </Stack>
                     <Button 
