@@ -62,8 +62,6 @@ def query_db():
     return metadata
 
 
-
-
 @app.route('/get-global-schema', methods=['GET'])
 def generate_consolidated_schema():
     
@@ -85,6 +83,18 @@ def generate_consolidated_schema():
 #   "http://localhost:5000/get-global-schema"
 
 
-
-
-
+'''
+Request Type
+- GET from /suggest
+Inputs
+- selected suggestions
+Outputs
+- Global XML file
+'''
+@app.route('/gschema', methods=['GET'])
+def generate_global_schema():
+    logger.info("Generate global schema")
+    # Parse the input: Find from and to
+    # Find the global xml file
+    # Append the data in their respective parts.
+    # return the global xml file

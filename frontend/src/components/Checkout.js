@@ -10,39 +10,40 @@ import FileUpload from './FileUpload';
 import SelectType from './SelectType';
 import SqlForm from './SqlForm';
 import ControlledTreeView from './TreeView';
+import  { Navigate } from 'react-router-dom'
 
 // npm i @material-ui/lab
 
 const sql_steps = ['Select Schema Type', 'Upload Local Schema', 'View Local Schema', 'Obtain Global Schema'];
 const csv_steps = ['Select Schema Type', 'Upload Local Schema', 'View Local Schema', 'Obtain Global Schema'];
-const steps = ['Select Schema Type', 'Upload Local Schema', 'View Local Schema', 'Obtain Global Schema'];
+const steps = [ 'Upload SQL details', 'View SQL', "Upload CSV", "Suggestions"];
 
 
 export default function Checkout() {
-  
+
   const [activeStep, setActiveStep] = React.useState(0);
   const [schemaType, setSchemaType] = React.useState('');
+  
 
 
-  function onChange_schemaType(newSchemaType) {   
+  function onChange_schemaType(newSchemaType) {
     setSchemaType(newSchemaType);
   }
 
 
-  function getStepContent(step) {    
+  function getStepContent(step) {
     switch (step) {
+      // case 0:
+      //   return <SelectType onChange_sT={onChange_schemaType} />;
       case 0:
-        return <SelectType onChange_sT={onChange_schemaType} />;
+        return <SqlForm />;
       case 1:
-        console.log(schemaType);
-        if(schemaType == 'sql')
-        {
-          return <SqlForm />;
-        }
-        
-        return <FileUpload />;
-      case 2:
         return <ControlledTreeView />;
+      case 2:
+        return <FileUpload />;
+      case 3:
+        return <Navigate to="/suggest" />
+       
       default:
         throw new Error('Unknown step');
     }
@@ -59,41 +60,41 @@ export default function Checkout() {
   };
 
   return (
-      <AppContainer>
-        <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
-          <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}>
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-          <React.Fragment>
-            {activeStep === steps.length ? (
-              <React.Fragment>
-              </React.Fragment>
-            ) : (
-              <React.Fragment>
-                {getStepContent(activeStep)}
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  {activeStep !== 0 && (
-                    <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
-                      Back
-                    </Button>
-                  )}
-
-                  <Button
-                    variant="contained"
-                    onClick={handleNext}
-                    sx={{ mt: 3, ml: 1 }}
-                  >
-                    {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
+    <AppContainer>
+      <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
+        <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}>
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+        <React.Fragment>
+          {activeStep === steps.length ? (
+            <React.Fragment>
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              {getStepContent(activeStep)}
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                {activeStep !== 0 && (
+                  <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
+                    Back
                   </Button>
-                </Box>
-              </React.Fragment>
-            )}
-          </React.Fragment>
-        </Paper>
-      </AppContainer>
+                )}
+
+                <Button
+                  variant="contained"
+                  onClick={handleNext}
+                  sx={{ mt: 3, ml: 1 }}
+                >
+                  {activeStep === steps.length - 2 ? 'Generate Suggestions' : 'Next'}
+                </Button>
+              </Box>
+            </React.Fragment>
+          )}
+        </React.Fragment>
+      </Paper>
+    </AppContainer>
   );
 }

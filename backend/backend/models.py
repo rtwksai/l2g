@@ -78,7 +78,9 @@ class ExtractMetadata():
 class Schema():
     def __init__(self, db_name, db_wrapper):
         self.db_name = db_name
-        self.root = et.Element('dbSchema', attrib=dict({'name': db_name}))
+        self.root = et.Element('dbType', attrib=dict({'name': db_name}))
+        self.schema_root = et.SubElement(self.root, 'dbSchema', attrib=dict({'name': "dbSchema"}))
+        # self.root = et.Element('dbSchema', attrib=dict({'name': db_name}))
         # This is the self.tables from Database() class which is a list of tables
         self.tables = db_wrapper['database']
 
@@ -100,7 +102,7 @@ class Schema():
             tableName = list(self.tables[table_index].keys())[0]
             tableCols = self.tables[table_index][tableName]
             
-            childTable = et.SubElement(self.root, 'table', attrib=dict({'name': tableName}))
+            childTable = et.SubElement(self.schema_root, 'table', attrib=dict({'name': tableName}))
             
             for col in tableCols:
                 childCol = et.Element('column', attrib=dict({'name': col['column_name']}))
@@ -122,8 +124,12 @@ class Schema():
                 childTable.append(childCol)
                 # End of column wise details
         
-        tree = et.ElementTree(self.root)
-        return tree
+        # tree = et.ElementTree(self.root)
+        # actual_root = et.Element('dbType', attrib=dict({'name': 'SQL'}))
+        # schema_root = et.SubElement(self.root, "dbType")
+        # actual_root = et.Element('dbType', attrib=dict({'name': "SQL"}))
+        # schema_root = et.SubElement(actual_root, 'table', attrib=self.root)
+        return et.ElementTree(self.root)
 
     # Need to refactor this code
     def write_schema(self, location=None):

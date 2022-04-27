@@ -8,6 +8,7 @@ import {
     IconButton
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import axios from 'axios';
 import React, { useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -44,6 +45,18 @@ export default function SmartSuggestion() {
     const [from, setFrom] = useState('');
     const [to, setTo] = useState();
 
+    const http = axios.create({
+		baseURL: "http://localhost:5000",
+		headers: {
+			"Content-type": "application/json"
+		}
+	});
+
+    function getSuggestions() {
+        // Query the dictionary from udupa's backend
+        // set the global value as that state
+    }
+
     function handleRemove(id) {
         const newList = selected.filter((item) => item[0]+item[1] !== id);
         setSelected(newList);
@@ -51,6 +64,23 @@ export default function SmartSuggestion() {
 
     function handleAdd(from, to) {
         setSelected(selected => [...selected, [from, to]]);
+    }
+
+    // Send the data to the backend to generate the final XML document
+    function handleGenerate() {
+        http.get("./gschema", {
+            params: {
+                suggestion_dict: selected
+            }
+        })
+        .then((response) => window.localStorage.setItem("suggestion_data", JSON.stringify(response)))
+        .then((result) => {
+            console.log('Success:', result);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+        
     }
 
     const filteredSuggestions = Object.keys(suggestionList)
@@ -182,12 +212,12 @@ export default function SmartSuggestion() {
                         </Stack>
 
 
-                        <Stack spacing='1em'>
+                        <Stack spacing='10px'>
                             <div>Selected</div>
                             <Box
                                 sx={{
-                                    width: '40vw',
-                                    height: 350,
+                                    width: '40.1vw',
+                                    height: 320,
                                     overflow: 'auto'
                                 }}
                             >   
@@ -195,11 +225,30 @@ export default function SmartSuggestion() {
                                     direction='column'
                                     spacing='10px'
                                 >
-                                    {selected.map((label) => (
+                                    {selected.length != 0 ?
+                                    selected.map((label) => (
                                         <Selection key={label[0]+label[1]} from={label[0]} to={label[1]}/>
-                                    ))}
+                                    )) : 
+                                    <p>Click on suggestions or add manually</p>}
                                 </Stack>
                             </Box>
+                            {selected.length != 0 ?
+                                <Button
+                                    variant="contained"
+                                    color="success"
+                                    disableRipple
+                                    onClick={() => handleGenerate()} 
+                                >
+                                    Generate
+                                </Button>:
+                                <Button
+                                    variant="contained"
+                                    disabled
+                                    color="error"
+                                >
+                                    Generate
+                                </Button>
+                            }
                         </Stack>
                     </Stack>
                 </Box>    
