@@ -34,6 +34,7 @@ class Preparator():
         list_tables = []
         if(type(xml_dict['consolidatedDB']["dbType"]) ==  type([]) ):
             for j in xml_dict['consolidatedDB']["dbType"]:
+                print("db here =", j["@name"])
                 list_tables = []
                 # print(j['dbSchema']['table'])
                 # print('*'*30)
@@ -53,8 +54,8 @@ class Preparator():
                     else: 
                         list_tables.append(self.extract_table(j["dbSchema"]["table"]))
                     dict_db[j["dbSchema"]["@name"]] = list_tables
-                # dict_db[j["dbSchema"]["@name"]] = list_tables
-            new_dict[j["@name"]] = dict_db
+                
+                new_dict[j["@name"]] = dict_db
                 # print(j['dbSchema']['table'])
                 # for _table in j['dbSchema']['table']:
                 #     list_tables.append(self.extract_table(_table))
@@ -81,6 +82,7 @@ class Preparator():
                 dict_db[xml_dict['consolidatedDB']["dbType"]["dbSchema"]["@name"]] = list_tables
             new_dict[xml_dict['consolidatedDB']["dbType"]["@name"]] = dict_db
         # print(new_dict)
+        print("len = ", new_dict.keys())
         return new_dict
 
     def extract_db(self, old_dict):
@@ -113,7 +115,7 @@ class SmartSuggestions():
 
     def exhaustive_search(self):
         for db_type in self.schema:
-            # print("db type =", db_type)
+            print("db type =", db_type)
             db_list = self.schema[db_type]
             for db_name in db_list:
                 # print("db name =", db_name)
@@ -124,6 +126,7 @@ class SmartSuggestions():
                     col_list = table_dict[table_name]
                     for col_dict in col_list:
                         full_col_name = db_type + "." + db_name + "." + table_name + "." + col_dict["col_name"]
+                        # print(full_col_name)
                         self.similarity_checks(col_dict, full_col_name)
                         # return self.full_similar_cols
 
