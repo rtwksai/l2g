@@ -4,6 +4,7 @@ import TreeView from "@material-ui/lab/TreeView";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import TreeItem from "@material-ui/lab/TreeItem";
+import { Box, Button } from "@material-ui/core";
 
 const useViewStyles = makeStyles({
   root: {}
@@ -48,14 +49,13 @@ const useItemStyles = makeStyles(theme => ({
   }
 }));
 
-export default function ControlledTreeView() 
-{
+export default function ControlledTreeView() {
   const classesView = useViewStyles();
   const classesItem = useItemStyles();
 
   const [expanded, setExpanded] = React.useState([]);
   const [selected, setSelected] = React.useState([]);
-  
+
 
   const handleToggle = (event, nodeIds) => {
     if (event.target.nodeName !== "svg") {
@@ -77,30 +77,44 @@ export default function ControlledTreeView()
   };
 
   const read_sql_data = JSON.parse(window.localStorage.getItem("sql_data"))['data'];
-
-  // console.log(read_sql_data);
-
   const getColumns = (dict_col_data) => {
     let label_ = dict_col_data['column_name'];
-    return <TreeItem classes={classesItem} nodeId={label_} label={label_}/>
+    return <TreeItem classes={classesItem} nodeId={label_} label={label_} />
   }
 
   const getTables = (dict_table_data) => {
-    // console.log(dict_table_data);
-    // console.log(Object.keys(dict_table_data));
     let label_table_name = Object.keys(dict_table_data)[0];
 
     const to_be_returned = dict_table_data[label_table_name].map(getColumns);
     return (
       <TreeItem classes={classesItem} nodeId={label_table_name} label={label_table_name} >
-      {to_be_returned}   
-    </TreeItem>
-      )
+        {to_be_returned}
+      </TreeItem>
+    )
   }
 
 
 
+  const selectAll = (event) => {
+    read_sql_data["database"].map((t) => {
+      const name = t[0];
+      if (selected.includes(name)) {
+        setSelected(selected.filter(id => id !== name));
+      } else {
+        setSelected([name, ...selected]);
+      }
+      t[name].map((c) => {
 
+        const namec = c[0];
+        if (selected.includes(namec)) {
+          setSelected(selected.filter(id => id !== namec));
+        } else {
+          setSelected([namec, ...selected]);
+        }
+      })
+
+    })
+  }
 
 
 
@@ -109,7 +123,7 @@ export default function ControlledTreeView()
 
 
   // let all_elements = [];
-  
+
 
 
 
@@ -127,29 +141,29 @@ export default function ControlledTreeView()
 
   //     }
   //     all_elements.push(</TreeItem >);
-    
+
   //   }
 
   // console.log(read_sql_data['database'][0]['table1'].map(getColumns));
 
   return (
 
-  
-    
 
 
-    <TreeView
-      classes={classesView}
-      defaultCollapseIcon={<ExpandMoreIcon />}
-      defaultExpandIcon={<ChevronRightIcon />}
-      expanded={expanded}
-      selected={selected}
-      onNodeToggle={handleToggle}
-      onNodeSelect={handleSelect}
-      multiSelect
-    >
-      {read_sql_data['database'].map(getTables)}
-      {/* <TreeItem classes={classesItem} nodeId="1" label="Table 1">
+    <Box>
+      <Button type="button" onClick={selectAll}>select All </Button>
+      <TreeView
+        classes={classesView}
+        defaultCollapseIcon={<ExpandMoreIcon />}
+        defaultExpandIcon={<ChevronRightIcon />}
+        expanded={expanded}
+        selected={selected}
+        onNodeToggle={handleToggle}
+        onNodeSelect={handleSelect}
+        multiSelect
+      >
+        {read_sql_data['database'].map(getTables)}
+        {/* <TreeItem classes={classesItem} nodeId="1" label="Table 1">
         <TreeItem classes={classesItem} nodeId="2" label="Col 1" />
         <TreeItem classes={classesItem} nodeId="3" label="Col 2" />
         <TreeItem classes={classesItem} nodeId="4" label="Col 3" />
@@ -162,6 +176,7 @@ export default function ControlledTreeView()
           </TreeItem>
         </TreeItem>
       </TreeItem> */}
-    </TreeView>
+      </TreeView>
+    </Box>
   );
 }

@@ -1,0 +1,1 @@
+<dbType name="SQL"><dbSchema name="ROUTE_DB"><table name="routes"><column name="route_id"><dataType>bigint</dataType><columnKey>PRI</columnKey><references /></column></table><table name="route_timings"><column name="route_no"><dataType>varchar</dataType><columnKey>PRI</columnKey><references /></column></table></dbSchema></dbType>

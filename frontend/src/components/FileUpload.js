@@ -33,6 +33,16 @@ export default function FileUpload(){
 			.then((response) => response.json)
 			.then((result) => {
 				console.log('Success:', result);
+
+				http.get("/get-global-schema")
+				.then((response) => response.json)
+				.then((result) => {
+					console.log('Success:', result);
+				})
+				.catch((error) => {
+					console.error('Error:', error);
+				});
+
 			})
 			.catch((error) => {
 				console.error('Error:', error);

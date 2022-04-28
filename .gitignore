@@ -3,8 +3,12 @@
 # dependencies
 .env
 /frontend/node_modules/
+backend/backend/xml_outputs/consolidated_csv_sql.xml
+backend/backend/csv_databases_dump.xml
+backend/backend/sql_databases_dump.xml
 /backend/uploads/local_schema_files
 /backend/backend/config.py
+/backend/nltk_data
 
 /frontend/.pnp
 /frontend/.pnp.js

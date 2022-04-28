@@ -8,7 +8,8 @@ import {
     IconButton
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import React, { useState } from 'react';
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -28,21 +29,47 @@ const SuggestionItem = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(1),
     alignItems: 'center',
     color: '#000000',
-    width: '16vw'
+    width: '16vw',
+    overflow: 'auto'
 }));
 
-const suggestionList = {
-    'db1.c2.t2': ['hi', 'hello'], 
-    'db2.c2.t3': ['hola', 'amigo'], 
-    'db2.c3.t4': ['cente', 'lacartel'], 
-    'db2.c3.t5': ['dm', 'testign']
-}
+// const suggestionList = {
+//     'db1.c2.t2': ['hi', 'hello'], 
+//     'db2.c2.t3': ['hola', 'amigo'], 
+//     'db2.c3.t4': ['cente', 'lacartel'], 
+//     'db2.c3.t5': ['dm', 'testign']
+// }
 
 export default function SmartSuggestion() {
     
     const [selected, setSelected] = useState([]);
     const [from, setFrom] = useState('');
     const [to, setTo] = useState();
+    const [suggestionList, setSuggestionList] = useState(null);
+
+    useEffect(async ()=>{
+        const result = await http.get('/get-suggestions')
+        console.log(result.data)
+        setSuggestionList(result.data);
+    }, []);
+
+    const http = axios.create({
+		baseURL: "http://localhost:5000",
+		headers: {
+			"Content-type": "application/json"
+		}
+	});
+
+    function getSuggestions() {
+        return http.get('/get-suggestions')
+        .then((response) => {return response.data})
+        .then((result) => {
+            console.log('Success:', result);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
 
     function handleRemove(id) {
         const newList = selected.filter((item) => item[0]+item[1] !== id);
@@ -53,13 +80,28 @@ export default function SmartSuggestion() {
         setSelected(selected => [...selected, [from, to]]);
     }
 
-    const filteredSuggestions = Object.keys(suggestionList)
-        .filter(key => key.toLowerCase().includes(from))
-        .reduce((obj, key) => {
-            obj[key] = suggestionList[key];
-            return obj;
-        }, {});
+    // Send the data to the backend to generate the final XML document
+    function handleGenerate() {
+        var sendFormData = new FormData();
+        sendFormData.append('suggestion_dict', selected)
+        http.post("./gschema", sendFormData)
+        .then((response) => window.localStorage.setItem("suggestion_data", JSON.stringify(response)))
+        .then((result) => {
+            console.log('Success:', result);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+        
+    }
 
+    const filteredSuggestions = suggestionList && Object.keys(suggestionList)
+    .filter(key => key.toLowerCase().includes(from))
+    .reduce((obj, key) => {
+        obj[key] = suggestionList[key];
+        return obj;
+    }, {});
+    
     const Suggestion = ({ from, to }) => {
         return(
             <Stack direction={'row'} alignItems={'center'}>
@@ -72,7 +114,7 @@ export default function SmartSuggestion() {
                 </SuggestionBox>
                 <IconButton 
                     disableRipple
-                    onClick={() => handleAdd(from, to)}
+                    onClick={() => {console.log(from, to); handleAdd(from, to)}}
                 >
                     <AddBoxIcon                 
                         style={{ 
@@ -172,7 +214,7 @@ export default function SmartSuggestion() {
                                     direction='column'
                                     spacing='10px'
                                 >
-                                    {Object.entries(filteredSuggestions).map( ([key, value]) =>
+                                    {filteredSuggestions && Object.entries(filteredSuggestions).map( ([key, value]) =>
                                         value.map((label) => 
                                         <Suggestion key={key+label} from={key} to={label}/>
                                         )                                           
@@ -182,12 +224,12 @@ export default function SmartSuggestion() {
                         </Stack>
 
 
-                        <Stack spacing='1em'>
+                        <Stack spacing='10px'>
                             <div>Selected</div>
                             <Box
                                 sx={{
-                                    width: '40vw',
-                                    height: 350,
+                                    width: '40.1vw',
+                                    height: 320,
                                     overflow: 'auto'
                                 }}
                             >   
@@ -195,11 +237,30 @@ export default function SmartSuggestion() {
                                     direction='column'
                                     spacing='10px'
                                 >
-                                    {selected.map((label) => (
+                                    {selected.length != 0 ?
+                                    selected.map((label) => (
                                         <Selection key={label[0]+label[1]} from={label[0]} to={label[1]}/>
-                                    ))}
+                                    )) : 
+                                    <p>Click on suggestions or add manually</p>}
                                 </Stack>
                             </Box>
+                            {selected.length != 0 ?
+                                <Button
+                                    variant="contained"
+                                    color="success"
+                                    disableRipple
+                                    onClick={() => handleGenerate()} 
+                                >
+                                    Generate
+                                </Button>:
+                                <Button
+                                    variant="contained"
+                                    disabled
+                                    color="error"
+                                >
+                                    Generate
+                                </Button>
+                            }
                         </Stack>
                     </Stack>
                 </Box>    

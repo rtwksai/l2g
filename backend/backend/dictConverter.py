@@ -49,5 +49,6 @@ def extract_db(old_dict):
 
 
 
-old_dict = parse_xml("C:/Users/Utkarsh Agarwal/Documents/GitHub/l2g/backend/test1.xml")
+old_dict = parse_xml("/home/k_udupa/Sem8/DM/Project/test1.xml")
 new_dict = extract_xml(old_dict)
+print(new_dict)

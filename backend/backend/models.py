@@ -3,6 +3,9 @@ import os
 import pyodbc
 import xml.etree.ElementTree as et
 import xmltodict
+import glob
+import pandas as pd
+import zipfile
 
 class Database():
     def __init__(self):
@@ -75,7 +78,9 @@ class ExtractMetadata():
 class Schema():
     def __init__(self, db_name, db_wrapper):
         self.db_name = db_name
-        self.root = et.Element('dbSchema', attrib=dict({'name': db_name}))
+        self.root = et.Element('dbType', attrib=dict({'name': 'SQL'}))
+        self.schema_root = et.SubElement(self.root, 'dbSchema', attrib=dict({'name': db_name}))
+        # self.root = et.Element('dbSchema', attrib=dict({'name': db_name}))
         # This is the self.tables from Database() class which is a list of tables
         self.tables = db_wrapper['database']
 
@@ -97,7 +102,7 @@ class Schema():
             tableName = list(self.tables[table_index].keys())[0]
             tableCols = self.tables[table_index][tableName]
             
-            childTable = et.SubElement(self.root, 'table', attrib=dict({'name': tableName}))
+            childTable = et.SubElement(self.schema_root, 'table', attrib=dict({'name': tableName}))
             
             for col in tableCols:
                 childCol = et.Element('column', attrib=dict({'name': col['column_name']}))
@@ -119,13 +124,17 @@ class Schema():
                 childTable.append(childCol)
                 # End of column wise details
         
-        tree = et.ElementTree(self.root)
-        return tree
+        # tree = et.ElementTree(self.root)
+        # actual_root = et.Element('dbType', attrib=dict({'name': 'SQL'}))
+        # schema_root = et.SubElement(self.root, "dbType")
+        # actual_root = et.Element('dbType', attrib=dict({'name': "SQL"}))
+        # schema_root = et.SubElement(actual_root, 'table', attrib=self.root)
+        return et.ElementTree(self.root)
 
     # Need to refactor this code
     def write_schema(self, location=None):
         xml_tree = self.make_schema()
-        save_path_file = "test.xml"
+        save_path_file = "./backend/xml_outputs/sql_databases_dump.xml"
         with open (save_path_file, "wb") as files :
             xml_tree.write(files)
 
@@ -139,3 +148,175 @@ class XMLParser():
         converted_dict = xmltodict.parse(global_xml_contents)
         print(converted_dict)
         return converted_dict
+
+
+class Schema_from_multi_CSVDB():
+
+    def __init__(self):
+
+        self.root_root = et.Element('dbType', attrib=dict({'name' : "CSV"}))
+        
+        with zipfile.ZipFile('./backend/csv_uploads/csv_databases.zip', 'r') as zip_ref:
+            zip_ref.extractall('./backend/csv_uploads/')
+
+        rootdir = './backend/csv_uploads/csv_databases'
+
+        self.dbs = []
+        self.dbTrees = []
+
+        for dir_it in os.scandir(rootdir):
+            if ( dir_it.is_dir() ):
+                database_name = dir_it.path.split('/')[-1]
+                self.dbs.append(database_name)
+
+                schema = Schema_from_CSVDB(database_name, dir_it.path)
+                its_root = schema.make_schema().getroot()
+                self.dbTrees.append(its_root)
+
+    def make_schema(self):
+        tree = et.ElementTree(self.root_root)
+        tree_root = self.root_root # 
+        # print(tree_root)
+        for some_root in self.dbTrees:
+            tree_root.append(some_root)
+        return tree
+
+
+    # Need to refactor this code
+    def write_schema(self, location=None):
+        xml_tree = self.make_schema()
+        save_path_file = "./backend/xml_outputs/csv_databases_dump.xml"
+        with open (save_path_file, "wb") as files :
+            xml_tree.write(files)
+
+
+
+# Used to create XML document representing the schema
+# Schema XSD in ../utils/local_rdb_schema.xsd
+class Schema_from_CSVDB():
+    def __init__(self, db_name, csv_DB_path):
+        self.db_name = db_name
+        self.root = et.Element('dbSchema', attrib=dict({'name': db_name}))
+        # This is the self.tables from Database() class which is a list of tables
+        self.tables = []
+        self.df_tables = []
+
+        # csv files in the path
+        files = glob.glob(csv_DB_path + "/*.csv")
+        
+        # checking all the csv files in the 
+        # specified path
+        for filename in files:
+            if(filename[-3:] == "csv"):
+                # reading content of csv file
+                # content.append(filename)
+                df = pd.read_csv(filename)
+                fn = filename.split('/')[-1]
+                self.tables.append(fn[:-4])
+                self.df_tables.append(df)
+            
+
+    '''
+    Input: table_name, 
+    list of list of colums, where each list has col name, data type and type of key
+
+    Adds a table to the root 
+    <table name="table_name">
+        <column ..../>
+        .
+        .
+        .
+    </table>
+    ''' 
+    def make_schema(self):
+        for table_index in range(len(self.tables)):
+            
+            tableName = self.tables[table_index]
+            tableCols = self.df_tables[table_index].columns
+            
+            childTable = et.SubElement(self.root, 'table', attrib=dict({'name': tableName}))
+            
+            for col in tableCols:
+                childCol = et.Element('column', attrib=dict({'name': col}))
+                # Start of column wise details
+                data_type = et.SubElement(childCol, "dataType")
+                data_type.text = str(self.df_tables[table_index].dtypes[col])
+                
+                column_key = et.SubElement(childCol, "columnKey")
+                # column_key.text = col['column_key']
+                
+                references = et.SubElement(childCol, "references")
+
+                childTable.append(childCol)
+                # End of column wise details
+        
+        tree = et.ElementTree(self.root) # 
+        return tree
+
+    # Need to refactor this code
+    def write_schema(self, location=None):
+        xml_tree = self.make_schema()
+        save_path_file = "test_csv_database_dump.xml"
+        with open (save_path_file, "wb") as files :
+            xml_tree.write(files)
+
+
+
+class Concatenate_SQL_CSV():
+
+    def __init__(self, path_to_dumps):
+        
+        tree_sql = et.parse(path_to_dumps + 'sql_databases_dump.xml')
+        root_sql = tree_sql.getroot()
+
+        tree_csv = et.parse(path_to_dumps + 'csv_databases_dump.xml')
+        root_csv = tree_csv.getroot()
+
+        main_root = et.Element('consolidatedDB', attrib=dict({}))
+        main_root.append(root_sql)
+        main_root.append(root_csv)
+
+        tree = et.ElementTree(main_root)
+        
+        tree.write(path_to_dumps + 'consolidated_csv_sql.xml')
+
+class Global_Schema():
+    def __init__(self, path_to_dumps='./backend/xml_outputs/'):
+        self.path_to_dumps = path_to_dumps
+
+    def merge_selected_suggestion(self, suggestion):
+        print(suggestion)
+        from_parsed_list = suggestion[0].split('.')
+        db_type = from_parsed_list[0]
+        db_name = from_parsed_list[1]
+        db_table = from_parsed_list[2]
+        db_column = from_parsed_list[3]
+        to_parsed_list = suggestion[1].split('.')
+        to_db_type = to_parsed_list[0]
+        to_db_name = to_parsed_list[1]
+        to_db_table = to_parsed_list[2]
+        to_db_column = to_parsed_list[3]
+        
+        xml_root = et.parse(self.path_to_dumps + 'consolidated_csv_sql.xml').getroot()
+        print(xml_root)
+        for dbtype in xml_root.findall(".//dbType[@name='{0}']".format(db_type)):
+            for dbname in dbtype.findall(".//dbSchema[@name='{0}']".format(db_name)):
+                for dbtable in dbname.findall(".//table[@name='{0}']".format(db_table)):
+                    for dbcolumn in dbtable.findall(".//column[@name='{0}']".format(db_column)):
+                        refer = dbcolumn.find('references')
+                        reference = et.SubElement(refer, "reference")
+                        r_table =  et.SubElement(reference, "referenceType")
+                        r_table.text = to_db_type
+                        r_table =  et.SubElement(reference, "referenceDB")
+                        r_table.text = to_db_name
+                        r_table =  et.SubElement(reference, "referenceTable")
+                        r_table.text = to_db_table
+                        r_column = et.SubElement(reference, "referenceColumn")
+                        r_column.text = to_db_column
+
+        tree = et.ElementTree(xml_root)        
+        tree.write(self.path_to_dumps + 'consolidated_csv_sql.xml')
+
+# if __name__ == '__main__':
+#     gs = Global_Schema()
+#     gs.merge_selected_suggestion(['SQL.companydb.department.dnumber', 'CSV.companydb2.department1.dnumber1'])
