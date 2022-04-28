@@ -285,6 +285,7 @@ class Global_Schema():
         self.path_to_dumps = path_to_dumps
 
     def merge_selected_suggestion(self, suggestion):
+        print(suggestion)
         from_parsed_list = suggestion[0].split('.')
         db_type = from_parsed_list[0]
         db_name = from_parsed_list[1]

@@ -96,7 +96,7 @@ export default function SmartSuggestion() {
     }
 
     const filteredSuggestions = suggestionList && Object.keys(suggestionList)
-    .filter(key => key.toLowerCase().includes(from.toLowerCase()))
+    .filter(key => key.toLowerCase().includes(from))
     .reduce((obj, key) => {
         obj[key] = suggestionList[key];
         return obj;
@@ -114,7 +114,7 @@ export default function SmartSuggestion() {
                 </SuggestionBox>
                 <IconButton 
                     disableRipple
-                    onClick={() => handleAdd(from, to)}
+                    onClick={() => {console.log(from, to); handleAdd(from, to)}}
                 >
                     <AddBoxIcon                 
                         style={{ 
@@ -163,7 +163,7 @@ export default function SmartSuggestion() {
                             variant="outlined"
                             style = {{width: '30vw'}}
                             sx={{ input: { color: 'white' }}}
-                            onChange={(e) => setFrom(e.target.value)}
+                            onChange={(e) => setFrom(e.target.value.toLowerCase())}
                         />
                         <TextField 
                             id="input-to" 
@@ -171,7 +171,7 @@ export default function SmartSuggestion() {
                             variant="outlined"
                             style = {{width: '30vw'}}
                             sx={{ input: { color: 'white' }}}
-                            onChange={(e) => setTo(e.target.value)}
+                            onChange={(e) => setTo(e.target.value.toLowerCase())}
                         />
                     </Stack>
                     <Button 
